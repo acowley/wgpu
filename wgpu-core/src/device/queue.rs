@@ -237,16 +237,17 @@ impl<B: hal::Backend> super::Device<B> {
                 assert!(range.start % 4 == 0, "Buffer {:?} has an uninitialized range with a start not aligned to 4 (start was {})", buffer, range.start);
                 assert!(size % 4 == 0, "Buffer {:?} has an uninitialized range with a size not aligned to 4 (size was {})", buffer, size);
 
-                unsafe {
-                    cmd_buf.fill_buffer(
-                        buffer_raw,
-                        hal::buffer::SubRange {
-                            offset: range.start,
-                            size: Some(size),
-                        },
-                        0,
-                    );
-                }
+                // FIXME: This is the action that breaks things
+                // unsafe {
+                //     cmd_buf.fill_buffer(
+                //         buffer_raw,
+                //         hal::buffer::SubRange {
+                //             offset: range.start,
+                //             size: Some(size),
+                //         },
+                //         0,
+                //     );
+                // }
             }
         }
 
@@ -752,10 +753,10 @@ impl<G: GlobalIdentityHandlerFactory> Global<G> {
 
                     log::trace!("Device after submission {}: {:#?}", submit_index, trackers);
                     drop(trackers);
-                    if !required_buffer_inits.map.is_empty() {
-                        device
-                            .initialize_buffer_memory(required_buffer_inits, &mut *buffer_guard)?;
-                    }
+                    // if !required_buffer_inits.map.is_empty() {
+                    //     device
+                    //         .initialize_buffer_memory(required_buffer_inits, &mut *buffer_guard)?;
+                    // }
                 }
 
                 // now prepare the GPU submission
